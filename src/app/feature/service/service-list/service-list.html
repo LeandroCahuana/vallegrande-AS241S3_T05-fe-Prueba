@@ -1,0 +1,206 @@
+<div class="table-container">
+    <div class="filter-container">
+        <div class="filter-group">
+            <label>Categoria:</label>
+            <select [(ngModel)]="ctgTypeFilter" (change)="applyFilters()">
+                <option value="">Todos</option>
+                <option value="CC">Cabello (hombre)</option>
+                <option value="CM">Manicure (hombre)</option>
+                <option value="CP">Pedicure (hombre)</option>
+                <option value="CR">Facial (hombre)</option>
+                <option value="DC">Cabello (mujer)</option>
+                <option value="DM">Manicure (mujer)</option>
+                <option value="DP">Pedicure (mujer)</option>
+                <option value="DR">Facial (mujer)</option>
+                <option value="DD">Depilación (mujer)</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Estado:</label>
+            <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+                <option value="">Todos</option>
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Orden:</label>
+            <select class="order-select" [(ngModel)]="sortOption" (change)="sortServices()">
+                <option value="">Ordenar por...</option>
+                <option value="name_asc">Nombre (A-Z)</option>
+                <option value="name_desc">Nombre (Z-A)</option>
+                <option value="price_asc">Precio (menor a mayor)</option>
+                <option value="price_desc">Precio (mayor a menor)</option>
+                <option value="date_desc">Fecha (recientes primero)</option>
+                <option value="date_asc">Fecha (antiguos primero)</option>
+            </select>
+        </div>
+
+        <button class="reset-btn" (click)="resetFilters()">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+
+        <button class="reset-btn" (click)="reportPdf()">
+            <i class="fas fa-print"></i>
+        </button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-doc">CATEGORIA</th>
+                    <th class="col-doc-number">SERVICIO</th>
+                    <th class="col-name">DESCRIPCIÓN</th>
+                    <th class="col-last">PRECIO</th>
+                    <th class="col-status">ESTADO</th>
+                    <th class="col-actions">ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let service of paginatedServices">
+                    <td class="col-doc">{{service.category}}</td>
+                    <td class="col-doc-number">{{service.name_service}}</td>
+                    <td class="col-name">{{service.description_service}}</td>
+                    <td class="col-last">{{service.price}}</td>
+                    <td class="col-status">
+                        <span class="status-badge" [class]="service.state ? 'ACTIVO' : 'INACTIVO'">
+                            {{service.state ? 'ACTIVO' : 'INACTIVO'}}
+                        </span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-buttons">
+                            <button title="Ver" (click)="openModal(service)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button title="Editar" (click)="openModalEdit(service)" *ngIf="service.state === true">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-toggle" (click)="toggleState(service.code, service.state!)">
+                            <i class="fa" [ngClass]="service.state === true ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para mostrar información completa -->
+    <div class="modal" *ngIf="showModal" (click)="closeModal($event)">
+        <div class="modal-content">
+            <span class="close-btn" (click)="closeModal($event)">&times;</span>
+            <h2>Información del servicio</h2>
+            <div class="modal-body">
+                <div class="info-row">
+                    <span class="info-label">Código:</span>
+                    <span class="info-value">{{selectedService?.code}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Categoria:</span>
+                    <span class="info-value">{{selectedService?.category}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Nombre del servicio:</span>
+                    <span class="info-value">{{selectedService?.name_service}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Descripción:</span>
+                    <span class="info-value">{{selectedService?.description_service}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Precio:</span>
+                    <span class="info-value">{{selectedService?.price}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Fecha de registro:</span>
+                    <span class="info-value">{{selectedService?.registration_date | date:'dd/MM/yyyy HH:mm'}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Estado:</span>
+                    <span class="info-value status-badge" [class]="selectedService?.state ? 'active' : 'inactive'">
+                        {{ selectedService?.state ? 'Activo' : 'Inactivo' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para actualizar los registros -->
+    <form [formGroup]="formEdit" (ngSubmit)="onUpdate()" autocomplete="off">
+        <div class="modal" *ngIf="showModalEdit" (click)="closeModalEdit($event)">
+            <div class="modal-content">
+                <span class="close-btn" (click)="closeModal($event)">&times;</span>
+                <h2>Actualizar servicio</h2>
+                <div class="modal-body">
+                    <div class="info-row">
+                        <span class="info-label">Código:</span>
+                        <input id="code" type="text" formControlName="code" readonly placeholder={{selectedService?.code}} value={{selectedService?.code}} style="display: none;">
+                        <span class="info-value">{{selectedService?.code}}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Categoría:</span>
+                        <input type="text" formControlName="category" placeholder={{selectedService?.category}} value={{selectedService?.category}} readonly style="display: none;">
+                        <span class="info-value">{{selectedService?.category}}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Nombre del servicio:</span>
+                        <div class="info-input">
+                        <input type="text" formControlName="nameService" maxlength="50" (keydown)="onlyLetters($event)">
+                            <span *ngIf="formEdit.get('nameService')?.hasError('required')" class="error">El nombre del servicio es obligatorio</span>
+                            <span *ngIf="formEdit.get('nameService')?.hasError('pattern')" class="error">Solo se permiten letras y algunos simbolos (/ () . -), no se permiten espacios en blanco ni simbolos al comienzo</span>
+                            <span *ngIf="formEdit.get('nameService')?.hasError('minlength')" class="error">Mínimo 3 caracteres</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Descripción:</span>
+                        <div class="info-input">
+                            <input type="text" formControlName="descriptionService" maxlength="500" (keydown)="onlyLettersAndSymbol($event)">
+                            <span *ngIf="formEdit.get('descriptionService')?.hasError('pattern')" class="error">No se permiten espacios en blanco al comienzo</span>
+                            <span *ngIf="formEdit.get('descriptionService')?.hasError('minlength')" class="error">Mínimo 3 caracteres</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Precio:</span>
+                        <div class="info-input">
+                            <input type="string" formControlName="price"
+                                (keydown)="onlyPrice($event, formEdit.get('price')?.value)" maxlength="6">
+                            <span *ngIf="formEdit.get('price')?.hasError('required')" class="error">El precio es obligatorio</span>
+                            <span *ngIf="formEdit.get('price')?.hasError('pattern')" class="error">Solo se aceptan valores numericos no mayor a 999.99 y con 2 decimales como máximo</span>
+                            <span *ngIf="formEdit.get('price')?.hasError('min')" class="error">El precio debe ser igual o mayor a 10 soles</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Fecha de registro:</span>
+                        <div class="info-input">
+                            <input type="string" formControlName="registration_date" placeholder={{selectedService?.registration_date}}
+                            value={{selectedService?.registration_date}} readonly style="display: none;">
+                            <span class="info-value">{{selectedService?.registration_date | date:'dd/MM/yyyy HH:mm'}}</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Estado:</span>
+                        <span class="info-value status-badge" [class]="selectedService?.state ? 'active' : 'inactive'">
+                            {{ selectedService?.state ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </div>
+                    <button class="view-btn-edit" type="submit">
+                        <i class="fas fa-pen fa-xs"></i> Actualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="pagination-controls" *ngIf="filteredServices.length > itemsPerPage">
+        <button (click)="prevPage()" [disabled]="currentPage === 1" class="pagination-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <span class="page-info">Página {{currentPage}} de {{totalPages}}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="pagination-btn">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</div>

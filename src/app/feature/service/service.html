@@ -1,0 +1,35 @@
+<div class="app-container">
+    <!-- Sidebar -->
+    <app-sidebar (toggle)="onSidebarToggle($event)"></app-sidebar>
+    <app-loading-animation *ngIf="isLoading"></app-loading-animation>
+
+    <!-- Contenido principal -->
+    <div class="main-content-container">
+        <div class="content-container">
+            <!-- Encabezado -->
+            <header class="header">
+                <div class="title-container">
+                    <div class="icon-bg">
+                        <img src="service.png" alt="Logo Clientes" />
+                    </div>
+                    <h1>SERVICIOS OFRECIDOS</h1>
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Buscar por nombre o código" [(ngModel)]="searchTerm" (input)="onSearchChange()"/>
+                    <button class="search-button" (click)="onSearchChange()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Contenido -->
+            <section class="content">
+                <div class="form-table-wrapper">
+                    <app-service-form (saved)="onFormSaved()">
+                    </app-service-form>
+                    <app-service-list></app-service-list>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

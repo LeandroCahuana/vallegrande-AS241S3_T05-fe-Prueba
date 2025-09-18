@@ -1,0 +1,36 @@
+<!-- Animación de carga -->
+<app-loading-animation *ngIf="isLoading"></app-loading-animation>
+
+<div class="app-container">
+    <app-sidebar (toggle)="onSidebarToggle($event)"></app-sidebar>
+
+    <div class="main-content-container">
+        <div class="content-container">
+            <header class="header">
+                <div class="title-container">
+                    <div class="icon-bg">
+                        <img src="/icons/client.png" alt="Logo Clientes" />
+                    </div>
+                    <h1>REGISTRO DE CLIENTES</h1>
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Buscar..." />
+                    <button class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </header>
+
+            <section class="content">
+                <div class="form-table-wrapper">
+                    <app-client-form>
+                        *ngIf="selectedClient"
+                        [client]="selectedClient"
+                        (saved)="onFormSaved()"
+                    </app-client-form>
+                    <app-client-list></app-client-list>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

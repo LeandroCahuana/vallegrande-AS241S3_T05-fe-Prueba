@@ -1,0 +1,108 @@
+<form [formGroup]="form" (ngSubmit)="form.valid && (client?.id ? onUpdate() : onSave())" class="form-container">
+
+    <div class="form-group-row"> <!-- Campo de Dos Columnas  T.Doc y N° Doc -->
+        <div class="form-group">
+            <label for="documentType">T.DOC</label>
+            <select id="documentType" formControlName="documentType" (change)="onDocumentTypeChange()">
+                <option value="DNI">DNI</option>
+                <option value="CE">CE</option>
+            </select>
+            <div class="error" *ngIf="form.get('documentType')?.invalid && form.get('documentType')?.touched">
+                <span>El tipo de documento es obligatorio</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="documentNumber">N° DOCUMENTO</label>
+            <input id="documentNumber" type="text" formControlName="documentNumber" (keydown)="onlyNumbers($event)"
+                [attr.maxlength]="form.get('documentType')?.value === 'DNI' ? 8 : 20"
+                placeholder="{{form.get('documentType')?.value === 'DNI' ? '8 dígitos' : '20 dígitos'}}">
+            <div class="error" *ngIf="form.get('documentNumber')?.invalid && form.get('documentNumber')?.touched">
+                <span *ngIf="form.get('documentNumber')?.hasError('required')">El número de documento es
+                    obligatorio</span>
+                <span *ngIf="form.get('documentNumber')?.hasError('pattern')">
+                    {{form.get('documentType')?.value === 'DNI' ? 'Debe tener 8 dígitos' : 'Debe tener 20 dígitos'}}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group-row"> <!-- Campo de Dos Columnas Nombres y Apellidos -->
+        <div class="form-group">
+            <label for="firstName">NOMBRES</label>
+            <input id="firstName" type="text" formControlName="firstName" (keydown)="onlyLetters($event)">
+            <div class="error" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
+                <span *ngIf="form.get('firstName')?.hasError('required')">Los nombres son obligatorios</span>
+                <span *ngIf="form.get('firstName')?.hasError('pattern')">Solo se permiten letras</span>
+                <span *ngIf="form.get('firstName')?.hasError('minlength')">Mínimo 3 caracteres</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">APELLIDOS</label>
+            <input id="lastName" type="text" formControlName="lastName" (keydown)="onlyLetters($event)">
+            <div class="error" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
+                <span *ngIf="form.get('lastName')?.hasError('required')">Los apellidos son obligatorios</span>
+                <span *ngIf="form.get('lastName')?.hasError('pattern')">Solo se permiten letras</span>
+                <span *ngIf="form.get('lastName')?.hasError('minlength')">Mínimo 2 caracteres</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group-row"> <!-- Campo de Dos Columnas Celular y Cumpleaños -->
+
+        <div class="form-group">
+            <label for="phoneNumber">CELULAR</label>
+            <input id="phoneNumber" type="text" formControlName="phoneNumber" (keydown)="onlyNumbers($event)"
+                maxlength="9" placeholder="9 dígitos">
+            <div class="error" *ngIf="form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched">
+                <span *ngIf="form.get('phoneNumber')?.hasError('required')">El celular es obligatorio</span>
+                <span *ngIf="form.get('phoneNumber')?.hasError('pattern')">Debe tener 9 dígitos y comenzar con 9</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="birthDate">CUMPLEAÑOS</label>
+            <div class="date-input-container">
+                <input type="date" formControlName="birthDate" [max]="maxBirthDate">
+            </div>
+            <div class="error" *ngIf="form.get('birthDate')?.invalid && form.get('birthDate')?.touched">
+                <span>La fecha de cumpleaños es obligatoria</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="email">CORREO</label>
+        <input id="email" type="text" formControlName="email" />
+
+        <div class="error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+            <span *ngIf="form.get('email')?.hasError('required')">El correo es obligatorio.</span>
+            <span *ngIf="form.get('email')?.hasError('email')">El formato del correo no es válido.</span>
+            <span *ngIf="form.get('email')?.hasError('pattern')">El correo debe contener el símbolo &#64;.</span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label for="address">DIRECCIÓN</label>
+        <input id="address" type="text" formControlName="address">
+        <div class="error" *ngIf="form.get('address')?.invalid && form.get('address')?.touched">
+            <span *ngIf="form.get('address')?.hasError('required')">La dirección es obligatoria</span>
+            <span *ngIf="form.get('address')?.hasError('minlength')">Mínimo 5 caracteres</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="registrationDate">FECHA DE REGISTRO</label>
+        <div class="date-input-container">
+            <input id="registrationDate" type="date" formControlName="registrationDate" readonly>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button type="submit" class="guardar" *ngIf="!client?.id">Guardar</button>
+    </div>
+    <div class="modal-actions">
+    </div>
+</form>

@@ -1,0 +1,70 @@
+<form [formGroup]="form" (ngSubmit)="onSave()" class="form-container" autocomplete="off">
+    <div class="form-group-row">
+        <div class="form-group">
+            <label for="category">CATEGORÍA</label>
+            <select id="category" formControlName="category">
+                <option value="CC">Cabello (hombre)</option>
+                <option value="CM">Manicure (hombre)</option>
+                <option value="CP">Pedicure (hombre)</option>
+                <option value="CR">Facial (hombre)</option>
+                <option value="DC">Cabello (mujer)</option>
+                <option value="DM">Manicure (mujer)</option>
+                <option value="DP">Pedicure (mujer)</option>
+                <option value="DR">Facial (mujer)</option>
+                <option value="DD">Depilación (mujer)</option>
+            </select>
+            <div class="error" *ngIf="form.get('category')?.invalid && form.get('category')?.touched">
+                <span>La categoria del servicio es importante</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="code">CÓDIGO</label>
+            <input id="code" type="text" formControlName="code" readOnly="true"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="nameService">NOMBRE DEL SERVICIO</label>
+        <input id="nameService" type="text" formControlName="nameService" maxlength="50" (keydown)="onlyLetters($event)" placeholder="Nombre completo">
+        <div class="error" *ngIf="form.get('nameService')?.invalid && form.get('nameService')?.touched">
+            <span *ngIf="form.get('nameService')?.hasError('required')">Los nombres de los servicios son
+                obligatorios</span>
+            <span *ngIf="form.get('nameService')?.hasError('pattern')">Solo se permiten letras y algunos simbolos (/ () . -), no se permiten espacios en blanco ni simbolos al comienzo</span>
+            <span *ngIf="form.get('nameService')?.hasError('minlength')">Mínimo 3 caracteres</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="descriptionService">DESCRIPCIÓN</label>
+        <textarea id="descriptionService" type="text" formControlName="descriptionService" maxlength="500" (keydown)="onlyLettersAndSymbol($event)" placeholder="Descripción del servicio"></textarea>
+        <div class="error" *ngIf="form.get('descriptionService')?.invalid && form.get('descriptionService')?.touched">
+            <span *ngIf="form.get('descriptionService')?.hasError('pattern')">No se permiten espacios en blanco al
+                comienzo</span>
+            <span *ngIf="form.get('descriptionService')?.hasError('minlength')">Mínimo 3 caracteres</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="price">PRECIO</label>
+        <input id="price" type="text" formControlName="price" (keydown)="onlyPrice($event, price.value)"
+            placeholder="Precio del servicio" #price maxlength="7" max="999">
+        <div class="error" *ngIf="form.get('price')?.invalid && form.get('price')?.touched">
+            <span *ngIf="form.get('price')?.hasError('required')">El precio es obligatorio</span>
+            <span *ngIf="form.get('price')?.hasError('min')">El precio debe ser igual o mayor a 10 soles</span>
+            <span *ngIf="form.get('price')?.hasError('pattern')" class="error">Solo se aceptan valores numericos no mayor a 999.99 y con 2 decimales como máximo</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="registration_date">FECHA DE REGISTRO</label>
+        <div class="date-input-container">
+            <input id="registration_ date" type="datetime-local" formControlName="registration_date" readonly>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button type="submit" class="guardar" *ngIf="!service?.code">Guardar</button>
+    </div>
+    <div class="modal-actions">
+    </div>
+</form>
