@@ -34,27 +34,26 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "800kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "8kB",
-                  "maximumError": "12kB"
+                  "maximumWarning": "20kB",
+                  "maximumError": "40kB"
+                },
+                {
+                  "type": "any",
+                  "maximumWarning": "2MB",
+                  "maximumError": "5MB"
                 }
-                
               ],
               "outputHashing": "all"
             },
@@ -110,7 +109,8 @@
   },
   "schematics": {
     "@schematics/angular:component": {
-      "type": "component"
+      "type": "",
+      "standalone": true
     },
     "@schematics/angular:directive": {
       "type": "directive"
@@ -119,7 +119,7 @@
       "type": "service"
     },
     "@schematics/angular:guard": {
-      "typeSeparator": "."
+      "typeSeparator": "-"
     },
     "@schematics/angular:interceptor": {
       "typeSeparator": "."

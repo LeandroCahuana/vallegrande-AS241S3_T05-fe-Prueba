@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy, HostListener, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterLink, RouterModule } from '@angular/router';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { LoginService } from '@core/services/login.service';
 
 @Component({
   selector: 'app-sidebar',
+  imports: [RouterLink, RouterModule],
   standalone: true,
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss']
@@ -116,6 +118,11 @@ export class Sidebar implements OnInit, OnDestroy {
         this.isExpanded = false;
       }
     });
+  }
+
+  outsession() : void {
+    this.logout();
+    this.router.navigateByUrl('/auth/login')
   }
 
   toggleSidebar(): void {

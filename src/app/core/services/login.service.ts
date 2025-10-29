@@ -3,41 +3,55 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Login } from '../interfaces/login';
+import { jwtDecode } from 'jwt-decode';
+import { DecodedToken } from '@core/interfaces/decodedToken';
+import { response } from 'express';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
+
   private http = inject(HttpClient);
   private apiUrl = `${environment.urlBackEnd}/v1/api/user`;
 
   // Usuario autenticado actualmente
-  private loggedUserSubject = new BehaviorSubject<Login | null>(null);
+  private loggedUserSubject = new BehaviorSubject<DecodedToken | null>(null);
   loggedUser$ = this.loggedUserSubject.asObservable();
 
   // Iniciar sesión
-  login(credentials: { email: string; passwordUser: string }): Observable<Login> {
-    return this.http.post<Login>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(user => {
-        this.setLoggedUser(user);
+  login(credentials: { username: string; password: string }): Observable<string> {
+    return this.http.post(`${this.apiUrl}/login`, credentials, { responseType: 'text' }).pipe(
+      tap(token => {
+        
+        this.setLoggedUser(token);
+        const decoded: DecodedToken = jwtDecode(token);
+        this.loggedUserSubject.next(decoded);
+
         this.logSuccess('Inicio de sesión exitoso');
       }),
-      catchError(this.handleError<Login>('login'))
+      catchError(this.handleError<string>('login'))
     );
   }
 
   // Cerrar sesión
   logout(): void {
     this.loggedUserSubject.next(null);
-    localStorage.removeItem('user');
+    localStorage.removeItem('token-local');
     this.logSuccess('Sesión cerrada');
   }
 
-  // Establecer usuario logueado (útil para guards/navbar)
-  setLoggedUser(user: Login | null): void {
-    this.loggedUserSubject.next(user);
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
+  // Decodificar token
+  getDecodedToken(): DecodedToken | null {
+    const token = localStorage.getItem('token-local');
+    return token ? jwtDecode(token) : null;
+  }
+
+  // Establecer usuario logueado
+  setLoggedUser(token: string | null): void {
+    if (token) {
+      localStorage.setItem('token-local', token);
+      sessionStorage.setItem('token-session', token);
     }
   }
 

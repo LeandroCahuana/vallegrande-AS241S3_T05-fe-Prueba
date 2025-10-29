@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    urlBackEnd: 'http://localhost:8080'
+    urlBackEnd: 'https://shadowy-crypt-7vr5pggvqp5xcrj4r-8085.app.github.dev'
     };

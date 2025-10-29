@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap');
 
 /* Variables */
 $primary-color: #7C9885;
@@ -27,7 +27,7 @@ $separator-color: rgba(128, 128, 128, 0.3);
 .sidebar {
   position: fixed;
   top: 20px;
-  left: 10px; /* Más pegado a la izquierda */
+  left: 10px;
   height: calc(100vh - 40px);
   width: 280px;
   @include glassmorphism(0.15);
@@ -49,6 +49,7 @@ $separator-color: rgba(128, 128, 128, 0.3);
 
     .user-profile {
       padding: 20px 0;
+      padding-top: 70px; /* Espacio para el botón toggle */
       justify-content: center;
       border-bottom: none;
 
@@ -56,6 +57,12 @@ $separator-color: rgba(128, 128, 128, 0.3);
         width: 40px;
         height: 40px;
       }
+    }
+
+    .toggle-btn-top {
+      left: 50%;
+      transform: translateX(-50%);
+      right: auto;
     }
 
     .menu-container {
@@ -101,7 +108,7 @@ $separator-color: rgba(128, 128, 128, 0.3);
       padding: 16px;
 
       .footer-items {
-        display: none; /* Rectángulos ocultos cuando está colapsado */
+        display: none;
       }
 
       .footer-items-collapsed {
@@ -120,6 +127,15 @@ $separator-color: rgba(128, 128, 128, 0.3);
         }
       }
     }
+
+    .toggle-btn-top {
+      right: 8px;
+      
+      .toggle-icon-top {
+        width: 22px;
+        height: 22px;
+      }
+    }
   }
 
   /* Sidebar expandido */
@@ -128,19 +144,70 @@ $separator-color: rgba(128, 128, 128, 0.3);
 
     .sidebar-footer {
       .footer-items {
-        display: flex; /* Rectángulos visibles cuando está expandido */
+        display: flex;
       }
 
       .footer-items-collapsed {
         display: none;
       }
     }
+
+    .toggle-btn-top {
+      right: 12px;
+      
+      .toggle-icon-top {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
+
+/* Botón toggle superior */
+.toggle-btn-top {
+  position: absolute;
+  top: 24px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  @include glassmorphism(0.2);
+  border: none;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  @include transition-smooth;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+
+  .toggle-icon-top {
+    width: 24px;
+    height: 24px;
+    filter: opacity(0.7);
+    @include transition-smooth;
+  }
+
+  &:hover {
+    background: $glass-bg-hover;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    .toggle-icon-top {
+      filter: opacity(1);
+      transform: scale(1.1);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
 /* Header con perfil */
 .user-profile {
   padding: 24px 20px;
+  padding-top: 70px; /* Espacio para el botón toggle */
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -340,40 +407,6 @@ $separator-color: rgba(128, 128, 128, 0.3);
   }
 }
 
-/* Botón toggle */
-.toggle-btn {
-  position: absolute;
-  top: 50%;
-  right: -15px;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  @include glassmorphism(0.2);
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  @include transition-smooth;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-  .toggle-icon {
-    width: 16px;
-    height: 16px;
-    filter: opacity(0.7);
-  }
-
-  &:hover {
-    background: $glass-bg-hover;
-    transform: translateY(-50%) scale(1.1);
-
-    .toggle-icon {
-      filter: opacity(1);
-    }
-  }
-}
-
 /* Overlay */
 .sidebar-overlay {
   position: fixed;
@@ -404,6 +437,11 @@ $separator-color: rgba(128, 128, 128, 0.3);
     &.minimized {
       transform: translateX(-100%);
     }
+  }
+
+  .toggle-btn-top {
+    top: 16px;
+    right: 10px;
   }
 }
 

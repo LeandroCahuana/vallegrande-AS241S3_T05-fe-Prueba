@@ -1,6 +1,8 @@
 export interface Login {
     id: number;
-    email: string;
-    roleUser: string;
+    username: string;
+    role: string;
+    password: string;
+    registration_date: Date;
     state: string;
 }

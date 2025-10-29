@@ -1,32 +1,61 @@
-import { Routes } from '@angular/router';
-
-// Importar componentes
-import { Home } from './feature/home/home';
-import { Client } from './feature/client/client';
-import { Data } from './feature/data/data';
-import { Users } from './feature/users/users';
-import { Product } from './feature/product/product';
-import { Supplier } from './feature/supplier/supplier';
-import { Service } from './feature/service/service';
-import { Reservations } from './feature/reservations/reservations';
-import { Report } from './feature/report/report';
-import { login } from './feature/login/login';
+import { Routes } from "@angular/router";
+import { Home } from "./feature/home/pages/home/home";
+import { login } from "./feature/auth/pages/login/login";
+import { Sidebar } from "./layout/sidebar/sidebar/sidebar";
+import { MainLayout } from "./layout/main-layout/main-layout";
+import { authGuard } from "@core/guards/auth-guard";
 
 export const routes: Routes = [
-    { path: 'home', component: Home },
-    { path: 'client', component: Client },
-    { path: 'data', component: Data },
-    { path: 'users', component: Users },
-    { path: 'products', component: Product },
-    { path: 'suppliers', component: Supplier },
-    { path: 'services', component: Service },
-    { path: 'reservations', component: Reservations },
-    { path: 'report', component: Report },
-    { path: 'login', component: login },
-
-    // Ruta por defecto
-    { path: '', pathMatch: 'full', redirectTo: 'login' },
-
-    // Ruta comodín por si no se encuentra la URL
-    { path: '**', redirectTo: 'login' }
-];
+    {
+        path: 'auth/login',
+        component: login
+    },
+    {
+        path: 'console',
+        component: MainLayout,
+        canActivate: [authGuard],
+        children: [
+            {
+                path: '',
+                component: Home
+            },
+            {
+                path: 'clients',
+                loadChildren: () => import('./feature/client/client.routes').then(m => m.routes)
+            },
+            {
+                path: 'data',
+                loadChildren: () => import('./feature/data/data.routes').then(m => m.routes)
+            },
+            {
+                path: 'products',
+                loadChildren: () => import('./feature/product/product.routes').then(m => m.routes)
+            },
+            {
+                path: 'reports',
+                loadChildren: () => import('./feature/report/report.routes').then(m => m.routes)
+            },
+            {
+                path: 'reservations',
+                loadChildren: () => import('./feature/reservations/reservations.routes').then(m => m.routes)
+            },
+            {
+                path: 'services',
+                loadChildren: () => import('./feature/service/service.routes').then(m => m.routes)
+            },
+            {
+                path: 'suppliers',
+                loadChildren: () => import('./feature/supplier/supplier.routes').then(m => m.routes)
+            },
+            {
+                path: 'users',
+                loadChildren: () => import('./feature/users/users.routes').then(m => m.routes)
+            }
+        ]
+    },
+    {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'auth/login'
+    }
+]
